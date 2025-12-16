@@ -66,3 +66,6 @@
 - [x] Modern dashboard and feature pages
 
 - [x] Change hero section image to new design
+
+- [x] Generate 5 hero image samples for user selection
+- [x] Apply Sample 2 (Action Shot) as hero image
