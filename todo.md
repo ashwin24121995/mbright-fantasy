@@ -64,3 +64,5 @@
 - [x] Redesigned homepage with animations
 - [x] Updated authentication pages
 - [x] Modern dashboard and feature pages
+
+- [x] Change hero section image to new design
