@@ -71,3 +71,5 @@
 - [x] Apply Sample 2 (Action Shot) as hero image
 
 - [x] Create new professional logo for MBRIGHT Fantasy (Championship badge style)
+
+- [x] Fix footer logo visibility issue

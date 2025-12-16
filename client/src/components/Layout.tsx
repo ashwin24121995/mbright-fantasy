@@ -202,7 +202,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12">
             {/* Brand Column */}
             <div className="lg:col-span-4">
-              <img src="/logo.png" alt="MBRIGHT Fantasy" className="h-12 w-auto mb-6 brightness-0 invert" />
+              <img src="/logo.png" alt="MBRIGHT Fantasy" className="h-16 w-auto mb-6" />
               <p className="text-background/70 mb-6 leading-relaxed">
                 India's premier free-to-play fantasy cricket platform. Build your dream team, compete with friends, and master cricket strategy without any financial risk.
               </p>
