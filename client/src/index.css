@@ -43,39 +43,40 @@
 }
 
 :root {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-600);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
-  --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.235 0.015 65);
+  /* Cricket Green & Gold Theme */
+  --primary: oklch(0.42 0.12 145); /* Cricket Green */
+  --primary-foreground: oklch(0.985 0.002 106.42);
+  --sidebar-primary: oklch(0.42 0.12 145);
+  --sidebar-primary-foreground: oklch(0.985 0.002 106.42);
+  --chart-1: oklch(0.42 0.12 145);
+  --chart-2: oklch(0.72 0.15 85);
+  --chart-3: oklch(0.55 0.1 250);
+  --chart-4: oklch(0.65 0.15 45);
+  --chart-5: oklch(0.6 0.12 320);
+  --radius: 0.5rem;
+  --background: oklch(0.985 0.002 106.42);
+  --foreground: oklch(0.205 0.02 120);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.235 0.015 65);
+  --card-foreground: oklch(0.205 0.02 120);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.235 0.015 65);
-  --secondary: oklch(0.98 0.001 286.375);
-  --secondary-foreground: oklch(0.4 0.015 65);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.141 0.005 285.823);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.623 0.214 259.815);
+  --popover-foreground: oklch(0.205 0.02 120);
+  --secondary: oklch(0.72 0.15 85); /* Victory Gold */
+  --secondary-foreground: oklch(0.205 0.02 120);
+  --muted: oklch(0.965 0.005 106.42);
+  --muted-foreground: oklch(0.45 0.02 120);
+  --accent: oklch(0.72 0.15 85);
+  --accent-foreground: oklch(0.205 0.02 120);
+  --destructive: oklch(0.55 0.2 27);
+  --destructive-foreground: oklch(0.985 0.002 106.42);
+  --border: oklch(0.88 0.02 120);
+  --input: oklch(0.88 0.02 120);
+  --ring: oklch(0.42 0.12 145);
   --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.235 0.015 65);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.623 0.214 259.815);
+  --sidebar-foreground: oklch(0.205 0.02 120);
+  --sidebar-accent: oklch(0.965 0.005 106.42);
+  --sidebar-accent-foreground: oklch(0.205 0.02 120);
+  --sidebar-border: oklch(0.88 0.02 120);
+  --sidebar-ring: oklch(0.42 0.12 145);
 }
 
 .dark {
@@ -174,4 +175,26 @@
       max-width: 1280px; /* Standard content width */
     }
   }
+}
+
+/* Cricket Theme Custom Utilities */
+.cricket-gradient {
+  background: linear-gradient(135deg, oklch(0.42 0.12 145) 0%, oklch(0.35 0.1 145) 100%);
+}
+
+.gold-gradient {
+  background: linear-gradient(135deg, oklch(0.72 0.15 85) 0%, oklch(0.65 0.12 75) 100%);
+}
+
+.hero-pattern {
+  background-image: 
+    radial-gradient(circle at 20% 50%, oklch(0.72 0.15 85 / 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 50%, oklch(0.42 0.12 145 / 0.1) 0%, transparent 50%);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, oklch(0.42 0.12 145), oklch(0.72 0.15 85));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
