@@ -73,3 +73,5 @@
 - [x] Create new professional logo for MBRIGHT Fantasy (Championship badge style)
 
 - [x] Fix footer logo visibility issue
+
+- [x] Remove fake statistics and placeholder data from homepage

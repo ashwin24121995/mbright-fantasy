@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
 import { 
   ChevronRight, Trophy, Users, Target, Shield, Zap, 
-  Star, TrendingUp, Award, Play, ArrowRight, Sparkles,
+  TrendingUp, Award, Play, ArrowRight, Sparkles,
   CheckCircle, Clock, Gamepad2
 } from "lucide-react";
 
@@ -47,12 +47,7 @@ export default function Home() {
     { step: "04", title: "Win Glory", desc: "Top the leaderboard" },
   ];
 
-  const stats = [
-    { value: "50K+", label: "Active Players" },
-    { value: "100+", label: "Matches Covered" },
-    { value: "500+", label: "Teams Created Daily" },
-    { value: "4.8", label: "User Rating" },
-  ];
+
 
   return (
     <Layout>
@@ -104,44 +99,12 @@ export default function Home() {
               </Link>
             </div>
             
-            {/* Trust Badges */}
-            <div className="flex flex-wrap items-center gap-6">
-              <div className="flex items-center gap-2">
-                <div className="flex -space-x-2">
-                  {[1,2,3,4].map((i) => (
-                    <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary border-2 border-white/20" />
-                  ))}
-                </div>
-                <span className="text-sm text-white/70">50K+ Players</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex">
-                  {[1,2,3,4,5].map((i) => (
-                    <Star key={i} className="h-4 w-4 text-amber-400 fill-amber-400" />
-                  ))}
-                </div>
-                <span className="text-sm text-white/70">4.8 Rating</span>
-              </div>
-            </div>
+
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-6 -mt-16 relative z-20">
-        <div className="container">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {stats.map((stat, index) => (
-              <Card key={index} className="glass border-0 shadow-xl hover-lift">
-                <CardContent className="p-6 text-center">
-                  <p className="text-3xl md:text-4xl font-display font-bold text-gradient mb-1">{stat.value}</p>
-                  <p className="text-sm text-muted-foreground">{stat.label}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* Features Section */}
       <section className="py-24 relative overflow-hidden">
