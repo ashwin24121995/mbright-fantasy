@@ -76,6 +76,6 @@
 
 - [x] Remove fake statistics and placeholder data from homepage
 
-- [ ] Prepare website for Railway deployment
-- [ ] Push code to GitHub repository
-- [ ] Create Railway deployment configuration
+- [x] Prepare website for Railway deployment
+- [x] Push code to GitHub repository
+- [x] Create Railway deployment configuration
