@@ -75,3 +75,7 @@
 - [x] Fix footer logo visibility issue
 
 - [x] Remove fake statistics and placeholder data from homepage
+
+- [ ] Prepare website for Railway deployment
+- [ ] Push code to GitHub repository
+- [ ] Create Railway deployment configuration
