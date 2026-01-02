@@ -168,16 +168,16 @@ export default function Dashboard() {
                         >
                           <div className="flex items-center gap-4">
                             <div className="text-center">
-                              <p className="font-semibold">{match.team1}</p>
+                              <p className="font-semibold">{match.teams?.[0] || 'TBA'}</p>
                               <p className="text-xs text-muted-foreground">vs</p>
-                              <p className="font-semibold">{match.team2}</p>
+                              <p className="font-semibold">{match.teams?.[1] || 'TBA'}</p>
                             </div>
                           </div>
                           <div className="text-right">
                             <p className="text-sm text-muted-foreground">{match.matchType}</p>
                             <div className="flex items-center gap-1 text-xs text-muted-foreground">
                               <Clock className="h-3 w-3" />
-                              <span>{new Date(match.startTime).toLocaleDateString()}</span>
+                              <span>{new Date(match.date || match.dateTimeGMT).toLocaleDateString()}</span>
                             </div>
                           </div>
                           <Link href={`/build-team/${match.id}`}>

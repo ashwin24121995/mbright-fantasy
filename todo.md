@@ -83,3 +83,17 @@
 - [x] Fix Railway deployment errors (Invalid URL issue)
 - [x] Remove Manus-specific dependencies for Railway compatibility
 - [x] Create Railway environment setup guide
+
+## Cricket API Integration
+- [x] Request CRICKET_API_KEY from user
+- [x] Create Cricket API service (server/_core/cricketApi.ts)
+- [x] Add Cricket API functions (getCurrentMatches, getLiveMatches, etc.)
+- [x] Test Cricket API connection
+- [x] Create matches tRPC router
+- [ ] Update database schema for real matches and players
+- [x] Update SelectMatch page to fetch real matches
+- [ ] Update BuildTeam page to fetch real players from match squads
+- [x] Implement live score auto-refresh (30 second interval on SelectMatch page)
+- [ ] Update Leaderboard with real match results
+- [ ] Add fantasy points calculation from API data
+- [x] Test Cricket API integration (all tests passing)

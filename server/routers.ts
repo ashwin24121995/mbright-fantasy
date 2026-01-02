@@ -5,6 +5,7 @@ import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import * as db from "./db";
+import * as cricketApi from "./_core/cricketApi";
 import { SignJWT } from "jose";
 import { ENV } from "./_core/env";
 
@@ -265,18 +266,48 @@ export const appRouter = router({
   }),
 
   matches: router({
-    upcoming: publicProcedure.query(async () => {
-      return await db.getUpcomingMatches();
+    // Get all current matches from Cricket API (live + upcoming)
+    current: publicProcedure.query(async () => {
+      return await cricketApi.getCurrentMatches();
     }),
 
+    // Get live matches from Cricket API
     live: publicProcedure.query(async () => {
-      return await db.getLiveMatches();
+      return await cricketApi.getLiveMatches();
     }),
 
+    // Get upcoming matches from Cricket API
+    upcoming: publicProcedure.query(async () => {
+      return await cricketApi.getUpcomingMatches();
+    }),
+
+    // Get completed matches from Cricket API
     completed: publicProcedure.query(async () => {
-      return await db.getCompletedMatches();
+      return await cricketApi.getCompletedMatches();
     }),
 
+    // Get match details by API ID
+    getByApiId: publicProcedure
+      .input(z.object({ id: z.string() }))
+      .query(async ({ input }) => {
+        return await cricketApi.getMatchInfo(input.id);
+      }),
+
+    // Get match scorecard
+    scorecard: publicProcedure
+      .input(z.object({ matchId: z.string() }))
+      .query(async ({ input }) => {
+        return await cricketApi.getMatchScorecard(input.matchId);
+      }),
+
+    // Get fantasy points for a match
+    fantasyPoints: publicProcedure
+      .input(z.object({ matchId: z.string() }))
+      .query(async ({ input }) => {
+        return await cricketApi.getFantasyMatchPoints(input.matchId);
+      }),
+
+    // Legacy database methods (for user-created teams)
     getById: publicProcedure
       .input(z.object({ id: z.number() }))
       .query(async ({ input }) => {
