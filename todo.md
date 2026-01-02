@@ -106,3 +106,20 @@
 - [ ] Create fantasy points calculation system
 - [ ] Update Leaderboard to show real rankings based on Cricket API data
 - [ ] Test all new features
+
+## Team Builder - Full Cricket API Integration
+- [x] Study fantasy points API endpoint structure and response format
+- [x] Update Cricket API service to fetch player data from match_squad endpoint
+- [x] Create player data transformation functions
+- [x] Update tRPC routers to expose player selection endpoints
+- [ ] Rebuild BuildTeam page with real player cards
+- [ ] Implement player filtering by role (batsman, bowler, all-rounder, wicket-keeper)
+- [ ] Add credit system (100 credits budget)
+- [ ] Implement team validation (11 players, max 7 from one team)
+- [ ] Add captain/vice-captain selection with point multipliers
+- [ ] Test team builder with live match data
+
+## Authentication Gate
+- [ ] Add authentication check to all protected pages
+- [ ] Redirect unauthenticated users to login/register form
+- [ ] Show login/register modal when clicking on protected features

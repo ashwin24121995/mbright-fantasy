@@ -317,12 +317,17 @@ export const appRouter = router({
     getPlayers: publicProcedure
       .input(z.object({ matchApiId: z.string() }))
       .query(async ({ input }) => {
-        // Get match info which includes squad data
-        const matchInfo = await cricketApi.getMatchInfo(input.matchApiId);
+        // Get squad data from Cricket API
+        const squadData = await cricketApi.getMatchSquad(input.matchApiId);
         
-        // For now, return empty array - will be populated from fantasy points API
-        // TODO: Fetch players from fantasy points endpoint
-        return [];
+        if (!squadData) {
+          return [];
+        }
+        
+        // Flatten players from both teams into a single array
+        const allPlayers = squadData.teams.flatMap(team => team.players);
+        
+        return allPlayers;
       }),
   }),
 

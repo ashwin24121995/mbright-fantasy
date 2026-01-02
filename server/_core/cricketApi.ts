@@ -164,55 +164,72 @@ export async function getMatchScorecard(matchId: string): Promise<any> {
 }
 
 /**
- * Get match squad/players
- * Note: Cricket API may not provide detailed squad info for all matches
- * This function attempts to extract available player data from match info
+ * Get match squad (players) for a specific match using /match_squad endpoint
  */
 export async function getMatchSquad(matchId: string): Promise<MatchSquad | null> {
   try {
-    const matchInfo = await getMatchInfo(matchId);
+    const response = await axios.get(`${BASE_URL}/match_squad`, {
+      params: { 
+        apikey: API_KEY,
+        id: matchId 
+      }
+    });
     
-    // Try to get fantasy summary which includes player names
-    try {
-      const fantasyData = await getFantasyMatchPoints(matchId);
+    if (response.data && response.data.data && response.data.status === 'success') {
+      const squadData = response.data.data;
       
-      // Group players by team
-      const team1Players: Player[] = [];
-      const team2Players: Player[] = [];
-      
-      fantasyData.players.forEach((player, index) => {
-        const playerData: Player = {
-          id: player.playerId || `player-${index}`,
+      // Transform API response to our Player interface
+      const teams = squadData.map((teamData: any) => ({
+        name: teamData.teamName,
+        players: teamData.players.map((player: any) => ({
+          id: player.id,
           name: player.name,
-          role: determinePlayerRole(player),
-          team: index < fantasyData.players.length / 2 ? matchInfo.teams[0] : matchInfo.teams[1],
-          credits: calculatePlayerCredits(player.points || 0),
-          points: player.points,
-        };
-        
-        if (index < fantasyData.players.length / 2) {
-          team1Players.push(playerData);
-        } else {
-          team2Players.push(playerData);
-        }
-      });
+          role: normalizePlayerRole(player.role),
+          team: teamData.teamName,
+          credits: assignDefaultCredits(player.role),
+          image: player.image || undefined,
+        }))
+      }));
       
       return {
         matchId,
-        teams: [
-          { name: matchInfo.teams[0], players: team1Players },
-          { name: matchInfo.teams[1], players: team2Players },
-        ],
+        teams,
       };
-    } catch (fantasyError) {
-      // Fantasy data not available, return basic squad structure
-      console.warn('[Cricket API] Fantasy data not available for match:', matchId);
-      return null;
     }
+    
+    console.warn('[Cricket API] Squad data not available for match:', matchId);
+    return null;
   } catch (error) {
     console.error('[Cricket API] Error fetching match squad:', error);
     return null;
   }
+}
+
+/**
+ * Normalize player role from API response to our standard format
+ */
+function normalizePlayerRole(role: string | undefined | null): Player['role'] {
+  if (!role) return 'batsman'; // Default to batsman if role is missing
+  
+  const roleLower = role.toLowerCase();
+  if (roleLower.includes('wicket')) return 'wicket-keeper';
+  if (roleLower.includes('all')) return 'all-rounder';
+  if (roleLower.includes('bowl')) return 'bowler';
+  return 'batsman';
+}
+
+/**
+ * Assign default credits based on player role
+ * In a real app, this would come from historical performance data
+ */
+function assignDefaultCredits(role: string | undefined | null): number {
+  if (!role) return 9; // Default credits if role is missing
+  
+  const roleLower = role.toLowerCase();
+  if (roleLower.includes('wicket')) return 9; // Wicket keepers
+  if (roleLower.includes('all')) return 10;   // All rounders (most valuable)
+  if (roleLower.includes('bowl')) return 8.5; // Bowlers
+  return 9;                                    // Batsmen
 }
 
 /**
