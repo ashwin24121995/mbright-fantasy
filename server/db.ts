@@ -201,30 +201,32 @@ export async function getAllPlayers() {
 }
 
 // User team functions
-export async function createUserTeam(userId: number, matchId: number, teamName: string = "My Team") {
+export async function createUserTeam(userId: number, matchApiId: string, teamName: string = "My Team", captainApiId: string = "", viceCaptainApiId: string = "") {
   const db = await getDb();
   if (!db) return null;
 
   await db.insert(userTeams).values({
     userId,
-    matchId,
+    matchApiId,
     teamName,
+    captainApiId,
+    viceCaptainApiId,
   });
 
   const result = await db.select().from(userTeams)
-    .where(and(eq(userTeams.userId, userId), eq(userTeams.matchId, matchId)))
+    .where(and(eq(userTeams.userId, userId), eq(userTeams.matchApiId, matchApiId)))
     .orderBy(desc(userTeams.createdAt))
     .limit(1);
 
   return result.length > 0 ? result[0] : null;
 }
 
-export async function getUserTeamForMatch(userId: number, matchId: number) {
+export async function getUserTeamForMatch(userId: number, matchApiId: string) {
   const db = await getDb();
   if (!db) return undefined;
 
   const result = await db.select().from(userTeams)
-    .where(and(eq(userTeams.userId, userId), eq(userTeams.matchId, matchId)))
+    .where(and(eq(userTeams.userId, userId), eq(userTeams.matchApiId, matchApiId)))
     .limit(1);
 
   return result.length > 0 ? result[0] : undefined;
@@ -239,19 +241,26 @@ export async function getUserTeams(userId: number) {
     .orderBy(desc(userTeams.createdAt));
 }
 
-export async function addPlayerToTeam(teamId: number, playerId: number) {
+export async function addPlayerToTeam(teamId: number, playerApiId: string, playerName: string, playerRole?: string, playerTeam?: string) {
   const db = await getDb();
   if (!db) return;
 
-  await db.insert(teamPlayers).values({ teamId, playerId });
+  await db.insert(teamPlayers).values({ 
+    teamId, 
+    playerApiId, 
+    playerName,
+    playerRole: playerRole || null,
+    playerTeam: playerTeam || null,
+    pointsEarned: 0
+  });
 }
 
-export async function removePlayerFromTeam(teamId: number, playerId: number) {
+export async function removePlayerFromTeam(teamId: number, playerApiId: string) {
   const db = await getDb();
   if (!db) return;
 
   await db.delete(teamPlayers).where(
-    and(eq(teamPlayers.teamId, teamId), eq(teamPlayers.playerId, playerId))
+    and(eq(teamPlayers.teamId, teamId), eq(teamPlayers.playerApiId, playerApiId))
   );
 }
 
@@ -259,42 +268,28 @@ export async function getTeamPlayers(teamId: number) {
   const db = await getDb();
   if (!db) return [];
 
-  const result = await db.select({
-    teamPlayer: teamPlayers,
-    player: players,
-  })
+  // Get team players with their API IDs
+  const result = await db.select()
     .from(teamPlayers)
-    .innerJoin(players, eq(teamPlayers.playerId, players.id))
     .where(eq(teamPlayers.teamId, teamId));
 
-  return result.map(r => ({
-    ...r.player,
-    isCaptain: r.teamPlayer.isCaptain,
-    isViceCaptain: r.teamPlayer.isViceCaptain,
-  }));
+  return result;
 }
 
-export async function setCaptain(teamId: number, playerId: number) {
+export async function setCaptain(teamId: number, playerApiId: string) {
   const db = await getDb();
   if (!db) return;
 
-  // Reset all captains first
-  await db.update(teamPlayers).set({ isCaptain: false }).where(eq(teamPlayers.teamId, teamId));
-  // Set new captain
-  await db.update(teamPlayers).set({ isCaptain: true })
-    .where(and(eq(teamPlayers.teamId, teamId), eq(teamPlayers.playerId, playerId)));
-  // Update user team
-  await db.update(userTeams).set({ captainId: playerId }).where(eq(userTeams.id, teamId));
+  // Update user team with captain API ID
+  await db.update(userTeams).set({ captainApiId: playerApiId }).where(eq(userTeams.id, teamId));
 }
 
-export async function setViceCaptain(teamId: number, playerId: number) {
+export async function setViceCaptain(teamId: number, playerApiId: string) {
   const db = await getDb();
   if (!db) return;
 
-  await db.update(teamPlayers).set({ isViceCaptain: false }).where(eq(teamPlayers.teamId, teamId));
-  await db.update(teamPlayers).set({ isViceCaptain: true })
-    .where(and(eq(teamPlayers.teamId, teamId), eq(teamPlayers.playerId, playerId)));
-  await db.update(userTeams).set({ viceCaptainId: playerId }).where(eq(userTeams.id, teamId));
+  // Update user team with vice-captain API ID
+  await db.update(userTeams).set({ viceCaptainApiId: playerApiId }).where(eq(userTeams.id, teamId));
 }
 
 export async function submitTeam(teamId: number) {
@@ -334,7 +329,7 @@ export async function getMatchLeaderboard(matchId: number, limit: number = 100) 
   })
     .from(userTeams)
     .innerJoin(users, eq(userTeams.userId, users.id))
-    .where(and(eq(userTeams.matchId, matchId), eq(userTeams.isSubmitted, true)))
+    .where(eq(userTeams.isSubmitted, true))
     .orderBy(desc(userTeams.totalPoints))
     .limit(limit);
 }

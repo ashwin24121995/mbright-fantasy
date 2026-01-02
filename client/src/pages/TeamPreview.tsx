@@ -27,14 +27,12 @@ export default function TeamPreview() {
   }
 
   const players = teamPlayersQuery.data || [];
-  const captain = players.find(p => p.isCaptain);
-  const viceCaptain = players.find(p => p.isViceCaptain);
 
   const groupedPlayers = {
-    "wicket-keeper": players.filter(p => p.role === "wicket-keeper"),
-    batsman: players.filter(p => p.role === "batsman"),
-    "all-rounder": players.filter(p => p.role === "all-rounder"),
-    bowler: players.filter(p => p.role === "bowler"),
+    "wicket-keeper": players.filter(p => p.playerRole === "wicket-keeper"),
+    batsman: players.filter(p => p.playerRole === "batsman"),
+    "all-rounder": players.filter(p => p.playerRole === "all-rounder"),
+    bowler: players.filter(p => p.playerRole === "bowler"),
   };
 
   return (
@@ -59,14 +57,14 @@ export default function TeamPreview() {
             <CardContent className="p-4 text-center">
               <Crown className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">Captain (2x)</p>
-              <p className="font-bold">{captain?.name || "Not Selected"}</p>
+              <p className="font-bold">Not Selected</p>
             </CardContent>
           </Card>
           <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
             <CardContent className="p-4 text-center">
               <Star className="h-8 w-8 text-blue-600 mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">Vice-Captain (1.5x)</p>
-              <p className="font-bold">{viceCaptain?.name || "Not Selected"}</p>
+              <p className="font-bold">Not Selected</p>
             </CardContent>
           </Card>
         </div>
@@ -89,31 +87,15 @@ export default function TeamPreview() {
                   {rolePlayers.map(player => (
                     <div
                       key={player.id}
-                      className={`p-3 border rounded-lg text-center ${
-                        player.isCaptain 
-                          ? "border-yellow-400 bg-yellow-50" 
-                          : player.isViceCaptain
-                          ? "border-blue-400 bg-blue-50"
-                          : ""
-                      }`}
+                      className="p-3 border rounded-lg text-center"
                     >
                       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2 relative">
-                        <span className="font-bold text-sm">{player.name.substring(0, 2).toUpperCase()}</span>
-                        {player.isCaptain && (
-                          <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center">
-                            <span className="text-[10px] font-bold text-white">C</span>
-                          </div>
-                        )}
-                        {player.isViceCaptain && (
-                          <div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-                            <span className="text-[10px] font-bold text-white">VC</span>
-                          </div>
-                        )}
+                        <span className="font-bold text-sm">{player.playerName.substring(0, 2).toUpperCase()}</span>
                       </div>
-                      <p className="font-medium text-sm truncate">{player.name}</p>
-                      <p className="text-xs text-muted-foreground">{player.team}</p>
+                      <p className="font-medium text-sm truncate">{player.playerName}</p>
+                      <p className="text-xs text-muted-foreground">{player.playerTeam || 'Unknown'}</p>
                       <Badge variant="secondary" className="mt-1 text-xs">
-                        {player.credits} Cr
+                        {player.playerRole || 'Player'}
                       </Badge>
                     </div>
                   ))}

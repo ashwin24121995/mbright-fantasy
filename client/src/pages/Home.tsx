@@ -1,14 +1,21 @@
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
+import { trpc } from "@/lib/trpc";
 import { 
   ChevronRight, Trophy, Users, Target, Shield, Zap, 
   TrendingUp, Award, Play, ArrowRight, Sparkles,
-  CheckCircle, Clock, Gamepad2
+  CheckCircle, Clock, Gamepad2, MapPin, Calendar, Loader2
 } from "lucide-react";
 
 export default function Home() {
+  // Fetch live and upcoming matches
+  const { data: liveMatches, isLoading: liveLoading } = trpc.matches.live.useQuery(undefined, {
+    refetchInterval: 30 * 1000, // Refresh every 30 seconds
+  });
+  const { data: upcomingMatches, isLoading: upcomingLoading } = trpc.matches.upcoming.useQuery();
   const features = [
     {
       icon: Gamepad2,
@@ -250,6 +257,203 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Live Matches Section */}
+      {liveMatches && liveMatches.length > 0 && (
+        <section className="py-16 bg-gradient-to-br from-red-500/10 via-background to-background">
+          <div className="container">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <Badge className="bg-red-500 text-white animate-pulse">
+                    <span className="flex items-center gap-1">
+                      <span className="w-2 h-2 bg-white rounded-full"></span>
+                      LIVE NOW
+                    </span>
+                  </Badge>
+                  <h2 className="text-3xl md:text-4xl font-display font-bold">
+                    Live Matches
+                  </h2>
+                </div>
+                <p className="text-muted-foreground">Join the action and build your team now</p>
+              </div>
+              <Link href="/select-match">
+                <Button variant="outline" className="hidden md:flex">
+                  View All
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+
+            {liveLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-cricket-green" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {liveMatches.slice(0, 3).map((match: any) => (
+                  <Card key={match.id} className="group hover-lift border-2 border-red-500/20 hover:border-red-500/40 transition-all">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <Badge className="bg-red-500 text-white">
+                          {match.matchType.toUpperCase()}
+                        </Badge>
+                        <Badge className="bg-red-500/10 text-red-500 animate-pulse">LIVE</Badge>
+                      </div>
+                      
+                      <h3 className="font-bold text-lg mb-4 line-clamp-2">{match.name}</h3>
+                      
+                      {/* Teams */}
+                      <div className="space-y-3 mb-4">
+                        {match.teamInfo && match.teamInfo.slice(0, 2).map((team: any, idx: number) => (
+                          <div key={idx} className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              {team.img && (
+                                <img 
+                                  src={team.img} 
+                                  alt={team.name} 
+                                  className="w-8 h-8 rounded-full"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src = '/logo.png';
+                                  }}
+                                />
+                              )}
+                              <span className="font-medium text-sm">{team.shortname || team.name}</span>
+                            </div>
+                            {match.score && match.score[idx] && (
+                              <span className="text-sm font-semibold">
+                                {match.score[idx].r}/{match.score[idx].w}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      {match.matchStatus && (
+                        <p className="text-xs text-muted-foreground mb-4 line-clamp-1">{match.matchStatus}</p>
+                      )}
+
+                      <div className="flex gap-2">
+                        <Link href={`/build-team?matchId=${match.id}`} className="flex-1">
+                          <Button className="w-full bg-cricket-green hover:bg-cricket-green/90" size="sm">
+                            <Users className="w-4 h-4 mr-2" />
+                            Build Team
+                          </Button>
+                        </Link>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            <div className="text-center mt-6 md:hidden">
+              <Link href="/select-match">
+                <Button variant="outline">
+                  View All Matches
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Upcoming Matches Section */}
+      {upcomingMatches && upcomingMatches.length > 0 && (
+        <section className="py-16">
+          <div className="container">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <Clock className="h-6 w-6 text-cricket-green" />
+                  <h2 className="text-3xl md:text-4xl font-display font-bold">
+                    Upcoming Matches
+                  </h2>
+                </div>
+                <p className="text-muted-foreground">Plan ahead and create your winning team</p>
+              </div>
+              <Link href="/select-match">
+                <Button variant="outline" className="hidden md:flex">
+                  View All
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+
+            {upcomingLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-cricket-green" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {upcomingMatches.slice(0, 6).map((match: any) => (
+                  <Card key={match.id} className="group hover-lift border-2 hover:border-cricket-green/40 transition-all">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <Badge className="bg-cricket-green text-white">
+                          {match.matchType.toUpperCase()}
+                        </Badge>
+                        <Badge variant="outline">{match.status}</Badge>
+                      </div>
+                      
+                      <h3 className="font-bold text-lg mb-4 line-clamp-2">{match.name}</h3>
+                      
+                      {/* Teams */}
+                      <div className="grid grid-cols-2 gap-3 mb-4">
+                        {match.teamInfo && match.teamInfo.slice(0, 2).map((team: any, idx: number) => (
+                          <div key={idx} className="flex flex-col items-center text-center">
+                            {team.img && (
+                              <img 
+                                src={team.img} 
+                                alt={team.name} 
+                                className="w-10 h-10 rounded-full mb-2"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = '/logo.png';
+                                }}
+                              />
+                            )}
+                            <span className="font-medium text-xs">{team.shortname || team.name}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="space-y-2 text-xs text-muted-foreground mb-4">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-3 w-3" />
+                          <span>{new Date(match.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                        </div>
+                        {match.venue && (
+                          <div className="flex items-center gap-2">
+                            <MapPin className="h-3 w-3" />
+                            <span className="truncate">{match.venue}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <Link href={`/build-team?matchId=${match.id}`} className="block">
+                        <Button className="w-full bg-cricket-green hover:bg-cricket-green/90" size="sm">
+                          <Users className="w-4 h-4 mr-2" />
+                          Build Team
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            <div className="text-center mt-6 md:hidden">
+              <Link href="/select-match">
+                <Button variant="outline">
+                  View All Matches
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* CTA Section */}
       <section className="py-24 relative overflow-hidden">

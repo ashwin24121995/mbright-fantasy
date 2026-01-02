@@ -34,6 +34,7 @@ export const passwordResets = mysqlTable("password_resets", {
 // Cricket matches
 export const matches = mysqlTable("matches", {
   id: int("id").autoincrement().primaryKey(),
+  apiMatchId: varchar("apiMatchId", { length: 255 }).notNull().unique(), // Cricket API match ID
   title: varchar("title", { length: 255 }).notNull(),
   team1: varchar("team1", { length: 100 }).notNull(),
   team2: varchar("team2", { length: 100 }).notNull(),
@@ -76,10 +77,10 @@ export const matchPlayers = mysqlTable("match_players", {
 export const userTeams = mysqlTable("user_teams", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
-  matchId: int("matchId").notNull(),
+  matchApiId: varchar("matchApiId", { length: 255 }).notNull(), // Cricket API match ID
   teamName: varchar("teamName", { length: 100 }).default("My Team").notNull(),
-  captainId: int("captainId"),
-  viceCaptainId: int("viceCaptainId"),
+  captainApiId: varchar("captainApiId", { length: 255 }).notNull(), // Cricket API player ID
+  viceCaptainApiId: varchar("viceCaptainApiId", { length: 255 }).notNull(), // Cricket API player ID
   totalPoints: int("totalPoints").default(0).notNull(),
   rank: int("rank"),
   isSubmitted: boolean("isSubmitted").default(false).notNull(),
@@ -91,9 +92,11 @@ export const userTeams = mysqlTable("user_teams", {
 export const teamPlayers = mysqlTable("team_players", {
   id: int("id").autoincrement().primaryKey(),
   teamId: int("teamId").notNull(),
-  playerId: int("playerId").notNull(),
-  isCaptain: boolean("isCaptain").default(false).notNull(),
-  isViceCaptain: boolean("isViceCaptain").default(false).notNull(),
+  playerApiId: varchar("playerApiId", { length: 255 }).notNull(), // Cricket API player ID
+  playerName: varchar("playerName", { length: 100 }).notNull(),
+  playerRole: varchar("playerRole", { length: 50 }),
+  playerTeam: varchar("playerTeam", { length: 100 }),
+  pointsEarned: int("pointsEarned").default(0).notNull(),
 });
 
 // Blog posts

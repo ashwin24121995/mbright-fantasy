@@ -90,10 +90,19 @@
 - [x] Add Cricket API functions (getCurrentMatches, getLiveMatches, etc.)
 - [x] Test Cricket API connection
 - [x] Create matches tRPC router
-- [ ] Update database schema for real matches and players
+- [x] Update database schema for real matches and players (TypeScript errors fixed)
 - [x] Update SelectMatch page to fetch real matches
-- [ ] Update BuildTeam page to fetch real players from match squads
+- [x] Update BuildTeam page (simplified version, full Cricket API integration pending)
 - [x] Implement live score auto-refresh (30 second interval on SelectMatch page)
 - [ ] Update Leaderboard with real match results
 - [ ] Add fantasy points calculation from API data
 - [x] Test Cricket API integration (all tests passing)
+
+## New Features - Phase 2
+- [x] Add upcoming matches section to homepage
+- [x] Add live matches section to homepage
+- [x] Update BuildTeam page (simplified version, full Cricket API integration pending)
+- [ ] Implement player selection with fantasy points display
+- [ ] Create fantasy points calculation system
+- [ ] Update Leaderboard to show real rankings based on Cricket API data
+- [ ] Test all new features

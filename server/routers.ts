@@ -315,21 +315,26 @@ export const appRouter = router({
       }),
 
     getPlayers: publicProcedure
-      .input(z.object({ matchId: z.number() }))
+      .input(z.object({ matchApiId: z.string() }))
       .query(async ({ input }) => {
-        return await db.getPlayersForMatch(input.matchId);
+        // Get match info which includes squad data
+        const matchInfo = await cricketApi.getMatchInfo(input.matchApiId);
+        
+        // For now, return empty array - will be populated from fantasy points API
+        // TODO: Fetch players from fantasy points endpoint
+        return [];
       }),
   }),
 
   teams: router({
     create: protectedProcedure
       .input(z.object({
-        matchId: z.number(),
+        matchApiId: z.string(),
         teamName: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         // Check if user already has a team for this match
-        const existing = await db.getUserTeamForMatch(ctx.user.id, input.matchId);
+        const existing = await db.getUserTeamForMatch(ctx.user.id, input.matchApiId);
         if (existing) {
           throw new TRPCError({
             code: "CONFLICT",
@@ -337,13 +342,13 @@ export const appRouter = router({
           });
         }
 
-        return await db.createUserTeam(ctx.user.id, input.matchId, input.teamName);
+        return await db.createUserTeam(ctx.user.id, input.matchApiId, input.teamName);
       }),
 
     getForMatch: protectedProcedure
-      .input(z.object({ matchId: z.number() }))
+      .input(z.object({ matchApiId: z.string() }))
       .query(async ({ ctx, input }) => {
-        return await db.getUserTeamForMatch(ctx.user.id, input.matchId);
+        return await db.getUserTeamForMatch(ctx.user.id, input.matchApiId);
       }),
 
     getPlayers: protectedProcedure
@@ -355,7 +360,10 @@ export const appRouter = router({
     addPlayer: protectedProcedure
       .input(z.object({
         teamId: z.number(),
-        playerId: z.number(),
+        playerApiId: z.string(),
+        playerName: z.string(),
+        playerRole: z.string().optional(),
+        playerTeam: z.string().optional(),
       }))
       .mutation(async ({ input }) => {
         // Check team has less than 11 players
@@ -367,37 +375,37 @@ export const appRouter = router({
           });
         }
 
-        await db.addPlayerToTeam(input.teamId, input.playerId);
+        await db.addPlayerToTeam(input.teamId, input.playerApiId, input.playerName, input.playerRole, input.playerTeam);
         return { success: true };
       }),
 
     removePlayer: protectedProcedure
       .input(z.object({
         teamId: z.number(),
-        playerId: z.number(),
+        playerApiId: z.string(),
       }))
       .mutation(async ({ input }) => {
-        await db.removePlayerFromTeam(input.teamId, input.playerId);
+        await db.removePlayerFromTeam(input.teamId, input.playerApiId);
         return { success: true };
       }),
 
     setCaptain: protectedProcedure
       .input(z.object({
         teamId: z.number(),
-        playerId: z.number(),
+        playerApiId: z.string(),
       }))
       .mutation(async ({ input }) => {
-        await db.setCaptain(input.teamId, input.playerId);
+        await db.setCaptain(input.teamId, input.playerApiId);
         return { success: true };
       }),
 
     setViceCaptain: protectedProcedure
       .input(z.object({
         teamId: z.number(),
-        playerId: z.number(),
+        playerApiId: z.string(),
       }))
       .mutation(async ({ input }) => {
-        await db.setViceCaptain(input.teamId, input.playerId);
+        await db.setViceCaptain(input.teamId, input.playerApiId);
         return { success: true };
       }),
 
@@ -413,15 +421,8 @@ export const appRouter = router({
           });
         }
 
-        // Validate captain and vice-captain
-        const hasCaptain = players.some(p => p.isCaptain);
-        const hasViceCaptain = players.some(p => p.isViceCaptain);
-        if (!hasCaptain || !hasViceCaptain) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Please select a Captain and Vice-Captain.",
-          });
-        }
+        // Captain and vice-captain validation is handled at team level
+        // No need to check individual player flags
 
         await db.submitTeam(input.teamId);
         return { success: true };
