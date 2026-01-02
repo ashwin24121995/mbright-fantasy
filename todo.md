@@ -130,3 +130,10 @@
 - [x] Improve live matches section with live scores and auto-refresh
 - [x] Add testimonials or user benefits section
 - [x] Enhance visual design with animations and better spacing
+
+## Hero Section Enhancement
+- [x] Add live matches widget on right side of hero section
+- [x] Show running matches with team logos and live scores
+- [x] Show completed matches with final scores and 'Completed' status
+- [x] Show upcoming matches below live/completed matches
+- [x] Auto-refresh live matches every 30 seconds
