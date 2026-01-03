@@ -153,6 +153,7 @@ export default function Home() {
           </div>
           
           {/* Live Matches Widget */}
+          {((liveMatches && liveMatches.length > 0) || (completedMatches && completedMatches.length > 0) || (upcomingMatches && upcomingMatches.length > 0)) && (
           <div className="hidden lg:block">
             <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6 shadow-2xl">
               <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
@@ -236,6 +237,7 @@ export default function Home() {
               )}
             </div>
           </div>
+          )}
           </div>
         </div>
       </section>

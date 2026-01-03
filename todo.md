@@ -137,3 +137,6 @@
 - [x] Show completed matches with final scores and 'Completed' status
 - [x] Show upcoming matches below live/completed matches
 - [x] Auto-refresh live matches every 30 seconds
+
+## Widget Visibility Fix
+- [x] Hide live matches widget when no matches are available
